@@ -1,0 +1,1 @@
+browserify app.js --outfile build/todomvc.js

@@ -7,7 +7,9 @@
     "example": "examples",
     "test": "test"
   },
-  "dependencies": {},
+  "dependencies": {
+    "vdom-patch-live": "git://github.com/ismail-codar/vdom-patch-live.git"
+  },
   "devDependencies": {
     "benchmark": "^1.0.0",
     "fake-raf": "0.0.1",
