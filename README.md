@@ -132,6 +132,9 @@ var vnode = h('div', {style: {color: '#000'}}, [
 
 ### Hooks
 
+Hooks are a way to hook into the lifecycle of DOM nodes. Snabbdom offers a rich
+selection of hooks.
+
 #### Overview
 
 | Name        | Triggered when | Arguments to callback |
@@ -161,9 +164,21 @@ h('div.row', {
 });
 ```
 
+#### The `remove` hook
+
+Allows you to hook into the removal of an element. The hook is called once a
+vnode is to be removed from the DOM. The handling function recieves both the
+vnode and a callback. You can control and delay the removal with the callback.
+It should be invoked once the hook is done doing its business and the element
+will only be removed once all `remove` hooks have invoked their callback.
+
+The hook is only triggered when and element is to be removed from its parent –
+not if it is the child of an element that is removed. For that see the destroy
+hook.
+
 ## Modules documentation
 
-This describes the core modules.
+This describes the core modules. All modules are optional.
 
 ### The class module
 
@@ -184,6 +199,26 @@ Allows you to set properties on DOM elements.
 h('a', {props: {href: '/foo'}, 'Go to Foo');
 ```
 
+### The attributes module
+
+Same as props but set attributes instead of properties on DOM elements
+
+```javascript
+h('a', { attrs: {href: '/foo'} }, 'Go to Foo');
+```
+
+Attributes are added and updated using `setAttribute`. In case of an attribute 
+that has been previously added/set is no longer present in the `attrs` object, 
+it is removed from the DOM element's attribute list using `removeAttribute`. 
+
+In the case of boolean attributes (.e.g. `disabled`, `hidden`, `selected` ...). 
+The meaning doesn't depend on the attribute value (`true` or `false`) but depends
+instead on the presence/absence of the attribute itself in the DOM element. Those 
+attributes are handled differently by the module : if a boolean attribute is set 
+to a [falsy value](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Boolean) (`0`, `-0`, `null`, `false`,`NaN`, `undefined`, or the empty 
+string (`""`)) then the attribute will be removed from the attribute list of the
+DOM element.
+
 ### The style module
 
 The style module is for making your HTML look slick and animate smoothly. At
@@ -193,11 +228,11 @@ it's core it allows you to set CSS properties on elements.
 h('span', {
   style: {border: '1px solid #bada55', color: '#c0ffee', fontWeight: 'bold'}
 }, 'Say my name, and every colour illuminates');
-``````
+```
 
 #### Delayed properties
 
-You can specify properties as being delayed. Whenver these properties change
+You can specify properties as being delayed. Whenever these properties change
 the change is not applied until after the next frame.
 
 ```javascript
@@ -206,7 +241,14 @@ h('span', {
 }, 'Imma fade right in!');
 ```
 
+This makes it easy to declaratively animate the entry of elements.
+
 #### Set properties on `remove`
+
+Styles set in the `remove` property will take effect once the element is about
+to be moved from the DOM. The applied styles should be animated with CSS
+transitions. Only once all the styles is done animating will the element be
+removed from the DOM.
 
 ```javascript
 h('span', {
@@ -214,6 +256,8 @@ h('span', {
           remove: {opacity: '1'}}
 }, 'It\'s better to fade out than to burn away');
 ```
+
+This makes it easy to declaratively animate the removal of elements.
 
 #### Set properties on `destroy`
 
